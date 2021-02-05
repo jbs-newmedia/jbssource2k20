@@ -1,0 +1,27 @@
+{
+  "info": {
+    "name": "JBSNM:WebDMS2k20",
+    "author": "Juergen Schwind",
+    "copyright": "Juergen Schwind",
+    "link": "http:\/\/oswframe.com",
+    "license": "GNU General Public License 3",
+    "package": "jbsproject.webdms2k20",
+    "version": "",
+    "release": "stable",
+    "group": "project",
+    "unique": false,
+    "serverlist": "jbs2k20"
+  },
+  "required": [
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.scripts",
+      "release": "stable"
+    },
+    {
+      "serverlist": "vis2k20",
+      "package": "vis2.core",
+      "release": "stable"
+    }
+  ]
+}

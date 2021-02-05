@@ -1,0 +1,27 @@
+{
+  "info": {
+    "name": "JBS:PDF",
+    "author": "Juergen Schwind",
+    "copyright": "Juergen Schwind",
+    "link": "http:\/\/oswframe.com",
+    "license": "GNU General Public License 3",
+    "package": "jbs.pdf",
+    "version": "",
+    "release": "stable",
+    "group": "core",
+    "unique": false,
+    "serverlist": "jbs2k20"
+  },
+  "required": [
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.fpdi",
+      "release": "stable"
+    },
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.tcpdf",
+      "release": "stable"
+    }
+  ]
+}

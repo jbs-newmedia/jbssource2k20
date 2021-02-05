@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "JBSNM:WebERP2k20",
+    "author": "Juergen Schwind",
+    "copyright": "Juergen Schwind",
+    "link": "http:\/\/oswframe.com",
+    "license": "GNU General Public License 3",
+    "package": "jbsproject.weberp2k20",
+    "version": "",
+    "release": "stable",
+    "group": "project",
+    "unique": false,
+    "serverlist": "jbs2k20"
+  },
+  "required": [
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.ktosepasimple",
+      "release": "stable"
+    },
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.jslib",
+      "release": "stable"
+    },
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.jslib_chartjs",
+      "release": "stable"
+    },
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.scripts",
+      "release": "stable"
+    },
+    {
+      "serverlist": "vis2k20",
+      "package": "vis2.core",
+      "release": "stable"
+    },
+    {
+      "serverlist": "jbs2k20",
+      "package": "jbs.kalender",
+      "release": "stable"
+    },
+    {
+      "serverlist": "jbs2k20",
+      "package": "jbs.pdf",
+      "release": "stable"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "JBS:Kalender",
+    "author": "Juergen Schwind",
+    "copyright": "Juergen Schwind",
+    "link": "http:\/\/oswframe.com",
+    "license": "GNU General Public License 3",
+    "package": "jbs.kalender",
+    "version": "",
+    "release": "stable",
+    "group": "core",
+    "unique": false,
+    "serverlist": "jbs2k20"
+  },
+  "required": [
+    {
+      "serverlist": "oswframe",
+      "package": "oswframe.tcpdf",
+      "release": "stable"
+    }
+  ]
+}
