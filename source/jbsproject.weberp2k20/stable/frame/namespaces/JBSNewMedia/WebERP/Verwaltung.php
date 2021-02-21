@@ -406,7 +406,7 @@ class Verwaltung {
 		if ($mandant_id==0) {
 			$mandant_id=$this->getMandantId();
 		}
-		if (!isset($this->mitarbeiter)) {
+		if ($this->mitarbeiter==[]) {
 			$this->mitarbeiter=[];
 			$QselectData=self::getConnection();
 			$QselectData->prepare('SELECT * FROM :table_weberp_mitarbeiter: WHERE mandant_id=:mandant_id: ORDER BY mitarbeiter_nachname ASC, mitarbeiter_vorname ASC, mitarbeiter_nr DESC');
