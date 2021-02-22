@@ -20,7 +20,7 @@ if ($osW_Scripts->checkLock()===true) {
 
 	$VIS2_Mandant=new \VIS2\Core\Mandant($VIS2_Main->getToolId());
 	foreach ($VIS2_Mandant->getMandanten() as $mandant_id=>$mandant) {
-		$VIS2_WebERP_Verwaltung=new \JBSNewMedia\WebERP\Verwaltung($VIS2_Mandant->getId());
+		$VIS2_WebERP_Verwaltung=new \JBSNewMedia\WebERP\Verwaltung($mandant_id);
 		if ($VIS2_WebERP_Verwaltung->getIntVar('cronuser')!==null) {
 			$VIS2_WebERP_Verwaltung->setUserId($VIS2_WebERP_Verwaltung->getIntVar('cronuser'));
 		} else {
