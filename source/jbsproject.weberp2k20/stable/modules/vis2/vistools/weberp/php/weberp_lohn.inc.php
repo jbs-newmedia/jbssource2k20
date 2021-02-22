@@ -164,6 +164,7 @@ for ($i=1; $i<=12; $i++) {
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_brutto']['options']=[];
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_brutto']['options']['order']=true;
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_brutto']['options']['search']=true;
+	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_brutto']['options']['default_value']=0;
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_brutto']['validation']=[];
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_brutto']['validation']['module']='float';
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_brutto']['_list']=[];
@@ -179,6 +180,7 @@ for ($i=1; $i<=12; $i++) {
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_netto']['options']=[];
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_netto']['options']['order']=true;
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_netto']['options']['search']=true;
+	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_netto']['options']['default_value']=0;
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_netto']['validation']=[];
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_netto']['validation']['module']='float';
 	$ddm4_elements['data']['lohn_'.sprintf('%02d', $i).'_netto']['_list']=[];
@@ -196,6 +198,7 @@ $ddm4_elements['data']['lohn_gesamt_brutto']['options']=[];
 $ddm4_elements['data']['lohn_gesamt_brutto']['options']['order']=true;
 $ddm4_elements['data']['lohn_gesamt_brutto']['options']['search']=true;
 $ddm4_elements['data']['lohn_gesamt_brutto']['options']['read_only']=true;
+$ddm4_elements['data']['lohn_gesamt_brutto']['options']['default_value']=0;
 $ddm4_elements['data']['lohn_gesamt_brutto']['validation']=[];
 $ddm4_elements['data']['lohn_gesamt_brutto']['validation']['module']='float';
 
@@ -210,6 +213,7 @@ $ddm4_elements['data']['lohn_gesamt_netto']['options']=[];
 $ddm4_elements['data']['lohn_gesamt_netto']['options']['order']=true;
 $ddm4_elements['data']['lohn_gesamt_netto']['options']['search']=true;
 $ddm4_elements['data']['lohn_gesamt_netto']['options']['read_only']=true;
+$ddm4_elements['data']['lohn_gesamt_netto']['options']['default_value']=0;
 $ddm4_elements['data']['lohn_gesamt_netto']['validation']=[];
 $ddm4_elements['data']['lohn_gesamt_netto']['validation']['module']='float';
 
