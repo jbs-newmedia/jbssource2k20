@@ -268,6 +268,8 @@ class Konto {
 			foreach ($this->getBuchungen() as $buchung) {
 				if ((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_kunde_nr'])>0)&&(strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0)&&($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto'])) {
 					$this->buchungs_ausgleich['ok'][]=['offener_posten'=>$offener_posten, 'buchung_evtl'=>$buchung_evtl];
+				} elseif ((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0)&&($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto'])) {
+					$this->buchungs_ausgleich['ok'][]=['offener_posten'=>$offener_posten, 'buchung_evtl'=>$buchung_evtl];
 				} elseif (((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0))&&($buchung['buchung_betrag']>=$offener_posten['rechnung_gesamt_brutto'])) {
 					$this->buchungs_ausgleich['evtl'][]=['offener_posten'=>$offener_posten, 'buchung_evtl'=>$buchung_evtl];
 				}

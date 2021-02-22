@@ -10,7 +10,7 @@
  * @license https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License 3
  */
 
-$Konto=new \JBSNewMedia\WebERP\Konto();
+$Konto=new \JBSNewMedia\WebERP\Konto($this->getFinishElementOption($element, 'mandant_id'));
 $result=$Konto->importBuchungen($this->getDoSendElementStorage($this->getFinishElementOption($element, 'var_file')), $this->getDoSendElementStorage($this->getFinishElementOption($element, 'var_format')), $this->getGroupOption('user_id', 'data'));
 
 if (in_array($result['type'], ['success', 'danger'])) {

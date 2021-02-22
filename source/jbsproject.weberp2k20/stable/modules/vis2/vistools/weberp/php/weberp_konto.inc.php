@@ -344,6 +344,7 @@ if (in_array($ddm_navigation_id, [2])) {
 	$ddm4_elements['finish']['vis2_weberp_kontoimport']=[];
 	$ddm4_elements['finish']['vis2_weberp_kontoimport']['module']='vis2_weberp_kontoimport';
 	$ddm4_elements['finish']['vis2_weberp_kontoimport']['options']=[];
+	$ddm4_elements['finish']['vis2_weberp_kontoimport']['options']['mandant_id']=$VIS2_Mandant->getId();
 	$ddm4_elements['finish']['vis2_weberp_kontoimport']['options']['var_file']='konto_import';
 	$ddm4_elements['finish']['vis2_weberp_kontoimport']['options']['var_format']='konto_format';
 
@@ -365,7 +366,7 @@ if (in_array($ddm_navigation_id, [3])) {
 	$ddm4_elements['send']['vis2_navigation']['options']=[];
 	$ddm4_elements['send']['vis2_navigation']['options']['data']=$navigation_links;
 
-	$Konto=new \JBSNewMedia\WebERP\Konto();
+	$Konto=new \JBSNewMedia\WebERP\Konto($VIS2_Mandant->getId());
 	$ar_todo=$Konto->getBuchungsAusgleichAsList();
 
 	if ($ar_todo['ok']!==[]) {
