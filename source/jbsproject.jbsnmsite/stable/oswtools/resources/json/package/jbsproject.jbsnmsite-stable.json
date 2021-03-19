@@ -1,0 +1,16 @@
+{
+  "info": {
+    "name": "JBSNM:JBSNM-Site",
+    "author": "Juergen Schwind",
+    "copyright": "Juergen Schwind",
+    "link": "http:\/\/oswframe.com",
+    "license": "closed-source",
+    "package": "jbsproject.jbsnmsite",
+    "version": "",
+    "release": "stable",
+    "group": "project",
+    "unique": false,
+    "serverlist": "jbs2k20"
+  },
+  "required": []
+}

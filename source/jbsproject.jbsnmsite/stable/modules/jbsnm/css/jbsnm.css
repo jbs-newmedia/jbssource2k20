@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+body {
+    overflow-y: scroll;
+}
+
+.scroll-to-top {
+    z-index:1100;
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    display: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    text-align: center;
+    color: #fff;
+    background: rgba(204, 7, 30, 0.5);
+    line-height: 46px;
+}
+.scroll-to-top:focus, .scroll-to-top:hover {
+    color: white;
+}
+.scroll-to-top:hover {
+    background: #cc071e;
+}
+.scroll-to-top i {
+    font-weight: 800;
+}
