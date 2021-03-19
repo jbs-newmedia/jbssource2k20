@@ -12,5 +12,26 @@
     "unique": false,
     "serverlist": "jbs2k20"
   },
-  "required": []
+  "required": [
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswproject.standalone",
+      "release": "stable"
+    },
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.corebs4",
+      "release": "stable"
+    },
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.favicon",
+      "release": "stable"
+    },
+    {
+      "serverlist": "oswframe2k20",
+      "package": "oswframe.iconcreator",
+      "release": "stable"
+    }
+  ]
 }
