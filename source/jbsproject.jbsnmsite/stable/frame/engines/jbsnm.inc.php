@@ -40,7 +40,11 @@ $file=\osWFrame\Core\Settings::getStringVar('settings_abspath').'modules'.DIRECT
 if (file_exists($file)) {
 	include_once $file;
 
-	$osW_Template->addStringTag('title', \osWFrame\Core\Language::getModuleName(\osWFrame\Core\Settings::getStringVar('frame_current_module')).' | JBS New Media GmbH');
+	if(\osWFrame\Core\Settings::getStringVar('project_default_module')==\osWFrame\Core\Settings::getStringVar('frame_default_module')) {
+		$osW_Template->addStringTag('title', 'JBS New Media GmbH');
+	} else {
+		$osW_Template->addStringTag('title', \osWFrame\Core\Language::getModuleName(\osWFrame\Core\Settings::getStringVar('frame_current_module')).' | JBS New Media GmbH');
+	}
 
 	$osW_Template->setVarFromFile('content', 'content', \osWFrame\Core\Settings::getStringVar('frame_current_module'), 'modules');
 
