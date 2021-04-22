@@ -1,0 +1,15 @@
+{
+  "info": {
+    "name": "JBS:Test",
+    "author": "Juergen Schwind",
+    "copyright": "Juergen Schwind",
+    "link": "http:\/\/oswframe.com",
+    "license": "GNU General Public License 3",
+    "package": "jbs.test",
+    "version": "",
+    "release": "stable",
+    "group": "core",
+    "unique": false,
+    "serverlist": "jbs2k20"
+  }
+}
