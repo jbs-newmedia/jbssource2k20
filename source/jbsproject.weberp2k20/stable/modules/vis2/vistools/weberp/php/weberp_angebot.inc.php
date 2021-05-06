@@ -48,15 +48,15 @@ if (in_array(\osWFrame\Core\Settings::getAction(), ['createpdfdruck', 'createpdf
 			$PDFAngebot_pages->setPositionenDetails($current_angebot->getPositionen());
 
 			if ($PDFAngebot_pages->generateAngebot()!==true) {
-				$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-				\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
+				$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+				\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
 			}
 
 			$PDFAngebot->setJBSPages($PDFAngebot_pages->getJBSPage());
 
 			if ($PDFAngebot->generateAngebot()!==true) {
-				$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-				\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
+				$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+				\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
 			}
 
 			if ($PDFAngebot->getJBSPrint()===true) {
@@ -69,8 +69,8 @@ if (in_array(\osWFrame\Core\Settings::getAction(), ['createpdfdruck', 'createpdf
 
 			if (in_array(\osWFrame\Core\Settings::getAction(), ['sendpdfemail'])) {
 				if ($current_angebot->getDetailValue('angebot_gesendet')==1) {
-					$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-					\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Rechnung wurde bereits versendet.', 'error', [], false));
+					$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+					\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Rechnung wurde bereits versendet.', 'error', [], false));
 				}
 				$mail=new \JBSNewMedia\WebERP\Mail($VIS2_WebERP_Verwaltung);
 				$mail->setKundeDetails($current_angebot->getKunde());
@@ -78,19 +78,19 @@ if (in_array(\osWFrame\Core\Settings::getAction(), ['createpdfdruck', 'createpdf
 				$mail->addAttachment($file);
 				if ($mail->sendAngebot()===true) {
 					$current_angebot->updateIntValue('angebot_gesendet', 1, $VIS2_User->getId());
-					$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-					\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Angebot per E-Mail versendet.', 'success', [], false));
+					$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+					\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Angebot per E-Mail versendet.', 'success', [], false));
 
 				}
-				$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-				\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode($mail->getErrorMessage(), 'error', [], false));
+				$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+				\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode($mail->getErrorMessage(), 'error', [], false));
 			} else {
 				$url=$osW_Template->buildhrefLink(\osWFrame\Core\Settings::getStringVar('frame_current_module'), 'vistool='.$VIS2_Main->getTool().'&vispage='.$VIS2_Navigation->getPage().'&action='.str_replace('create', 'download', \osWFrame\Core\Settings::getAction()).'&angebot_id='.$current_angebot->getAngebotId(), false);
 				\osWFrame\Core\Settings::dieScript('window.open("'.$url.'", "_blank");');
 			}
 		} else {
-			$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-			\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Angebot nicht gefunden.', 'error', [], false));
+			$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+			\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Angebot nicht gefunden.', 'error', [], false));
 		}
 	}
 }

@@ -44,15 +44,15 @@ if (in_array(\osWFrame\Core\Settings::getAction(), ['createpdfdruck', 'createpdf
 			$PDFSchreiben_pages->setSchreibenDetails($current_schreiben->getDetails());
 
 			if ($PDFSchreiben_pages->generateSchreiben()!==true) {
-				$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-				\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
+				$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+				\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
 			}
 
 			$PDFSchreiben->setJBSPages($PDFSchreiben_pages->getJBSPage());
 
 			if ($PDFSchreiben->generateSchreiben()!==true) {
-				$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-				\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
+				$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+				\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Kann PDF nicht erzeugen.', 'error', [], false));
 			}
 
 			if ($PDFSchreiben->getJBSPrint()===true) {
@@ -66,8 +66,8 @@ if (in_array(\osWFrame\Core\Settings::getAction(), ['createpdfdruck', 'createpdf
 			$url=$osW_Template->buildhrefLink(\osWFrame\Core\Settings::getStringVar('frame_current_module'), 'vistool='.$VIS2_Main->getTool().'&vispage='.$VIS2_Navigation->getPage().'&action='.str_replace('create', 'download', \osWFrame\Core\Settings::getAction()).'&schreiben_id='.$current_schreiben->getSchreibenId(), false);
 			\osWFrame\Core\Settings::dieScript('window.open("'.$url.'", "_blank");');
 		} else {
-			$osW_Bootstrap4_Notify=new \osWFrame\Core\Bootstrap4_Notify($osW_Template);
-			\osWFrame\Core\Settings::dieScript($osW_Bootstrap4_Notify->getNotifyCode('Schreiben nicht gefunden.', 'error', [], false));
+			$osW_Bootstrap5_Notify=new \osWFrame\Core\Bootstrap5_Notify($osW_Template);
+			\osWFrame\Core\Settings::dieScript($osW_Bootstrap5_Notify->getNotifyCode('Schreiben nicht gefunden.', 'error', [], false));
 		}
 	}
 }
