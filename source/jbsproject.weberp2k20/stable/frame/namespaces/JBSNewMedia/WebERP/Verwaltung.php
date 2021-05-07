@@ -590,6 +590,7 @@ class Verwaltung {
 		if (!in_array($order, ['ASC', 'DESC'])) {
 			$order='DESC';
 		}
+
 		$QselectData=self::getConnection();
 		if ($onlypublic===true) {
 			$QselectData->prepare('SELECT * FROM :table_weberp_kunde: WHERE mandant_id=:mandant_id: AND kunde_ispublic=:kunde_ispublic: ORDER BY :sort: :order:');

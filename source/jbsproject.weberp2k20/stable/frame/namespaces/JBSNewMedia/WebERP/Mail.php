@@ -277,11 +277,9 @@ class Mail extends osWFrame\PHPMailer {
 		$this->setBody($content);
 		if ($this->send()===true) {
 			return true;
+		} else {
+			$this->setErrorMessage($this->ErrorInfo);
 		}
-
-		/*
-		 * ToDo: Errorhandling
-		 */
 
 		return false;
 	}
@@ -307,11 +305,9 @@ class Mail extends osWFrame\PHPMailer {
 		$this->setBody($content);
 		if ($this->send()===true) {
 			return true;
+		} else {
+			$this->setErrorMessage($this->ErrorInfo);
 		}
-
-		/*
-		 * ToDo: Errorhandling
-		 */
 
 		return false;
 	}
@@ -337,11 +333,9 @@ class Mail extends osWFrame\PHPMailer {
 		$this->setBody($content);
 		if ($this->send()===true) {
 			return true;
+		} else {
+			$this->setErrorMessage($this->ErrorInfo);
 		}
-
-		/*
-		 * ToDo: Errorhandling
-		 */
 
 		return false;
 	}

@@ -1189,12 +1189,18 @@ function ddm3_formular_'.$osW_DDM4->getName().'_artikel(position, load) {
 				.done(function(data) {
 					if (data.artikel_nr) {
 						$("input[name=\'position_artikel_"+position+"_nr\']").val(data.artikel_nr);
+					} else {
+						$("input[name=\'position_artikel_"+position+"_nr\']").val("");
 					}
 					if (data.artikel_kurz) {
 						$("input[name=\'position_artikel_"+position+"_kurz\']").val(data.artikel_kurz);
+					} else {
+						$("input[name=\'position_artikel_"+position+"_kurz\']").val("");
 					}
 					if (data.artikel_beschreibung) {
 						$("#position_artikel_"+position+"_beschreibung").val(data.artikel_beschreibung);
+					} else {
+						$("#position_artikel_"+position+"_beschreibung").val("");
 					}
 					if (data.artikel_beschreibung_ausblenden) {
 						if (data.artikel_beschreibung_ausblenden==1) {
@@ -1207,12 +1213,18 @@ function ddm3_formular_'.$osW_DDM4->getName().'_artikel(position, load) {
 					}
 					if (data.artikel_preis) {
 						$("#position_artikel_"+position+"_preis").val(data.artikel_preis);
+					} else {
+						$("#position_artikel_"+position+"_preis").val("");
 					}
 					if (data.artikel_typ) {
 						$("#position_artikel_"+position+"_typ").selectpicker("val", data.artikel_typ);
+					} else {
+						$("#position_artikel_"+position+"_typ").val("");
 					}
 					if (data.artikel_mwst) {
 						$("#position_artikel_"+position+"_mwst").selectpicker("val", data.artikel_mwst);
+					} else {
+						$("#position_artikel_"+position+"_mwst").val("");
 					}
 				});
 			} else {
@@ -1308,12 +1320,18 @@ function ddm3_formular_'.$osW_DDM4->getName().'_kunde(load) {
 				}
 				if (data.kunde_firma_anrede) {
 					$("#rechnung_kunde_firma_anrede").selectpicker("val", data.kunde_firma_anrede);
+				} else {
+					$("#rechnung_kunde_firma_anrede").selectpicker("val", "");
 				}
 				if (data.kunde_firma) {
 					$("#rechnung_kunde_firma").val(data.kunde_firma);
+				} else {
+					$("#rechnung_kunde_firma").val("");
 				}
 				if (data.kunde_firma2) {
 					$("#rechnung_kunde_firma2").val(data.kunde_firma2);
+				} else {
+					$("#rechnung_kunde_firma2").val("");
 				}
 				if (data.kunde_rechungsasp) {
 					if (data.kunde_rechungsasp==1) {
@@ -1326,42 +1344,68 @@ function ddm3_formular_'.$osW_DDM4->getName().'_kunde(load) {
 				}
 				if (data.kunde_anrede) {
 					$("#rechnung_kunde_anrede").selectpicker("val", data.kunde_anrede);
+				} else {
+					$("#rechnung_kunde_anrede").selectpicker("val", "");
 				}
 				if (data.kunde_titel) {
 					$("#rechnung_kunde_titel").val(data.kunde_titel);
+				} else {
+					$("#rechnung_kunde_titel").val("");
 				}
 				if (data.kunde_vorname) {
 					$("#rechnung_kunde_vorname").val(data.kunde_vorname);
+				} else {
+					$("#rechnung_kunde_vorname").val("");
 				}
 				if (data.kunde_nachname) {
 					$("#rechnung_kunde_nachname").val(data.kunde_nachname);
+				} else {
+					$("#rechnung_kunde_nachname").val("");
 				}
 				if (data.kunde_email) {
 					$("#rechnung_kunde_email").val(data.kunde_email);
+				} else {
+					$("#rechnung_kunde_email").val("");
 				}
 				if (data.kunde_strasse) {
 					$("#rechnung_kunde_strasse").val(data.kunde_strasse);
+				} else {
+					$("#rechnung_kunde_strasse").val("");
 				}
 				if (data.kunde_land) {
 					$("#rechnung_kunde_land").selectpicker("val", data.kunde_land);
+				} else {
+					$("#rechnung_kunde_land").selectpicker("val", "");
 				}
 				if (data.kunde_plz) {
 					$("#rechnung_kunde_plz").val(data.kunde_plz);
+				} else {
+					$("#rechnung_kunde_plz").val("");
 				}
 				if (data.kunde_ort) {
 					$("#rechnung_kunde_ort").val(data.kunde_ort);
+				} else {
+					$("#rechnung_kunde_ort").val("");
 				}
 				if (data.kunde_telefon) {
 					$("#rechnung_kunde_telefon").val(data.kunde_telefon);
+				} else {
+					$("#rechnung_kunde_telefon").val("");
 				}
 				if (data.kunde_fax) {
 					$("#rechnung_kunde_fax").val(data.kunde_fax);
+				} else {
+					$("#rechnung_kunde_fax").val("");
 				}
 				if (data.kunde_mobil) {
 					$("#rechnung_kunde_mobil").val(data.kunde_mobil);
+				} else {
+					$("#rechnung_kunde_mobil").val("");
 				}
 				if (data.kunde_homepage) {
 					$("#rechnung_kunde_homepage").val(data.kunde_homepage);
+				} else {
+					$("#rechnung_kunde_homepage").val("");
 				}
 			}
 		});
