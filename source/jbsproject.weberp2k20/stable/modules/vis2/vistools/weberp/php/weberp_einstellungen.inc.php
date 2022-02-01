@@ -1264,7 +1264,7 @@ if (in_array($ddm_navigation_id, [7])) {
 	$ddm4_elements['data']['mwst_titel']['validation']['module']='integer';
 	$ddm4_elements['data']['mwst_titel']['validation']['length_min']=0;
 	$ddm4_elements['data']['mwst_titel']['validation']['length_max']=3;
-	$ddm4_elements['data']['mwst_titel']['validation']['value_min']=1;
+	$ddm4_elements['data']['mwst_titel']['validation']['value_min']=0;
 	$ddm4_elements['data']['mwst_titel']['validation']['value_max']=100;
 
 	/*
