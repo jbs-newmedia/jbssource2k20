@@ -581,7 +581,7 @@ class Verwaltung {
 	 * @param int $mandant_id
 	 * @return array
 	 */
-	public function getKunden(bool $onlypublic=true, string $key='kunde_id', string $value='kunde_name', string $sort='kunde_nr', string $order='desc', int $mandant_id=0):array {
+	public function getKunden(bool $onlypublic=true, string $key='kunde_id', string $value='kunde_name', string $sort='kunde_name', string $order='asc', int $mandant_id=0):array {
 		if ($mandant_id==0) {
 			$mandant_id=$this->getMandantId();
 		}
@@ -627,7 +627,7 @@ class Verwaltung {
 	 * @param int $mandant_id
 	 * @return array
 	 */
-	public function getArtikel(bool $onlypublic=true, string $key='artikel_id', string $value='artikel_name', string $sort='artikel_kurz', string $order='desc', int $mandant_id=0):array {
+	public function getArtikel(bool $onlypublic=true, string $key='artikel_id', string $value='artikel_name', string $sort='artikel_kurz', string $order='asc', int $mandant_id=0):array {
 		if ($mandant_id==0) {
 			$mandant_id=$this->getMandantId();
 		}
