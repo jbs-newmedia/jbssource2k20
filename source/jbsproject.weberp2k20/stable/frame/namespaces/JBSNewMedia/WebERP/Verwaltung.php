@@ -581,7 +581,7 @@ class Verwaltung {
 	 * @param int $mandant_id
 	 * @return array
 	 */
-	public function getKunden(bool $onlypublic=true, string $key='kunde_id', string $value='kunde_name', string $sort='kunde_name', string $order='asc', int $mandant_id=0):array {
+	public function getKunden(bool $onlypublic=true, string $key='kunde_id', string $value='kunde_name', string $sort='kunde_firma', string $order='asc', int $mandant_id=0):array {
 		if ($mandant_id==0) {
 			$mandant_id=$this->getMandantId();
 		}
@@ -593,9 +593,9 @@ class Verwaltung {
 
 		$QselectData=self::getConnection();
 		if ($onlypublic===true) {
-			$QselectData->prepare('SELECT * FROM :table_weberp_kunde: WHERE mandant_id=:mandant_id: AND kunde_ispublic=:kunde_ispublic: ORDER BY :sort: :order:');
+			$QselectData->prepare('SELECT * FROM :table_weberp_kunde: WHERE mandant_id=:mandant_id: AND kunde_ispublic=:kunde_ispublic: ORDER BY :sort: :order:, kunde_nachname ASC');
 		} else {
-			$QselectData->prepare('SELECT * FROM :table_weberp_kunde: WHERE mandant_id=:mandant_id: ORDER BY :sort: :order:');
+			$QselectData->prepare('SELECT * FROM :table_weberp_kunde: WHERE mandant_id=:mandant_id: ORDER BY :sort: :order:, kunde_nachname ASC');
 		}
 		$QselectData->bindTable(':table_weberp_kunde:', 'weberp_kunde');
 		$QselectData->bindInt(':mandant_id:', $mandant_id);
@@ -677,8 +677,8 @@ class Verwaltung {
 			$QselectData->bindInt(':kunde_id:', $kunde_id);
 			$QselectData->execute();
 			if ($QselectData->rowCount()==1) {
-				$QselectData->fetch();
-				$this->kunde_by_id[$kunde_id]=$QselectData->result;
+				$result=$QselectData->fetch();
+				$this->kunde_by_id[$kunde_id]=$result;
 			}
 
 		}
@@ -704,8 +704,8 @@ class Verwaltung {
 			$QselectData->bindInt(':artikel_id:', $artikel_id);
 			$QselectData->execute();
 			if ($QselectData->rowCount()==1) {
-				$QselectData->fetch();
-				$this->artikel_by_id[$artikel_id]=$QselectData->result;
+				$result=$QselectData->fetch();
+				$this->artikel_by_id[$artikel_id]=$result;
 			}
 
 		}
@@ -933,11 +933,11 @@ class Verwaltung {
 			$QselectKunde->bindInt(':kunde_id:', $kunde_id);
 			$QselectKunde->execute();
 			if ($QselectKunde->rowCount()==1) {
-				$QselectKunde->fetch();
+				$result=$QselectKunde->fetch();
 				foreach ($rechnung_data_year as $year=>$rechnung_data_month) {
 					$rechnung=[];
 					$rechnung['kunde_id']=$kunde_id;
-					$rechnung['kunde_data']=$QselectKunde->result;
+					$rechnung['kunde_data']=$result;
 					$rechnung['rechnung_nr']='';
 					$rechnung['leistung_von']=99999999;
 					$rechnung['leistung_bis']=0;
@@ -961,8 +961,8 @@ class Verwaltung {
 					$QselectRechnung->bindInt(':rechnung_nr:', date('y').'000');
 					$QselectRechnung->execute();
 					if ($QselectRechnung->rowCount()==1) {
-						$QselectRechnung->fetch();
-						$rechnung['rechnung_nr']=$QselectRechnung->result['rechnung_nr'];
+						$result=$QselectRechnung->fetch();
+						$rechnung['rechnung_nr']=$result['rechnung_nr'];
 						$rechnung['rechnung_nr']=$rechnung['rechnung_nr']+1;
 					} else {
 						$rechnung['rechnung_nr']=date('y').'001';

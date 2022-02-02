@@ -261,19 +261,18 @@ class Verwaltung {
 			$QselectData->execute();
 			$data['current']=[];
 			if ($QselectData->rowCount()==1) {
-				$QselectData->fetch();
-				$data['current']=$QselectData->result;
+				$data['current']=$QselectData->fetch();
 			}
 
 			$data['breadcrumb']=[];
-			if ($ordner_id==$QselectData->result['ordner_id']) {
-				$QselectData->result['current']=true;
+			if ($ordner_id==$data['current']['ordner_id']) {
+				$data['current']['current']=true;
 			} else {
-				$QselectData->result['current']=false;
+				$data['current']['current']=false;
 			}
-			$data['breadcrumb'][]=$QselectData->result;
-			while ($QselectData->result['ordner_parent_id']!=0) {
-				$ordner_parent_id=$QselectData->result['ordner_parent_id'];
+			$data['breadcrumb'][]=$data['current'];
+			while ($data['current']['ordner_parent_id']!=0) {
+				$ordner_parent_id=$data['current']['ordner_parent_id'];
 				$QselectData=self::getConnection();
 				$QselectData->prepare('SELECT * FROM :table_webdms_ordner: WHERE ordner_ispublic=:ordner_ispublic: AND mandant_id=:mandant_id: AND ordner_id=:ordner_id:');
 				$QselectData->bindTable(':table_webdms_ordner:', 'webdms_ordner');
@@ -281,13 +280,13 @@ class Verwaltung {
 				$QselectData->bindInt(':mandant_id:', $this->getMandantId());
 				$QselectData->bindRaw(':ordner_id:', $ordner_parent_id);
 				if ($QselectData->exec()==1) {
-					$QselectData->fetch();
-					if ($ordner_id==$QselectData->result['ordner_id']) {
-						$QselectData->result['current']=true;
+					$result=$QselectData->fetch();
+					if ($ordner_id==$result['ordner_id']) {
+						$result['current']=true;
 					} else {
-						$QselectData->result['current']=false;
+						$result['current']=false;
 					}
-					$data['breadcrumb'][]=$QselectData->result;
+					$data['breadcrumb'][]=$result;
 				}
 			}
 			$data['breadcrumb']=array_reverse($data['breadcrumb']);
@@ -335,22 +334,20 @@ class Verwaltung {
 		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
 		$QselectData->bindRaw(':dokument_id:', $datei_id);
 		if ($QselectData->exec()==1) {
-			$QselectData->fetch();
-			$data=$QselectData->result;
+			$data=$QselectData->fetch();
 
 			$QselectData2=self::getConnection();
 			$QselectData2->prepare('SELECT * FROM :table_webdms_ordner: WHERE ordner_ispublic=:ordner_ispublic: AND mandant_id=:mandant_id: AND ordner_id=:ordner_id:');
 			$QselectData2->bindTable(':table_webdms_ordner:', 'webdms_ordner');
 			$QselectData2->bindInt(':ordner_ispublic:', 1);
 			$QselectData2->bindInt(':mandant_id:', $this->getMandantId());
-			$QselectData2->bindInt(':ordner_id:', $QselectData->result['ordner_id_1']);
+			$QselectData2->bindInt(':ordner_id:', $data['ordner_id_1']);
 			$QselectData2->execute();
 
 			$data['current']=[];
 
 			if ($QselectData2->exec()==1) {
-				$QselectData2->fetch();
-				$data['current']=$QselectData2->result;
+				$data['current']=$QselectData2->fetch();
 			}
 		}
 
