@@ -2,9 +2,10 @@
   "info": {
     "name": "JBSNM:WebERP2k20",
     "author": "Juergen Schwind",
-    "copyright": "Juergen Schwind",
-    "link": "http:\/\/oswframe.com",
-    "license": "GNU General Public License 3",
+    "copyright": "JBS New Media GmbH",
+    "year": 2022,
+    "link": "https:\/\/jbs-newmedia.com",
+    "license": "MIT License",
     "package": "jbsproject.weberp2k20",
     "version": "",
     "release": "stable",
