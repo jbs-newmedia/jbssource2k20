@@ -151,6 +151,7 @@ $ddm4_elements['data']['kunde_id']['validation']=[];
 $ddm4_elements['data']['kunde_id']['validation']['module']='integer';
 $ddm4_elements['data']['kunde_id']['validation']['length_min']=1;
 $ddm4_elements['data']['kunde_id']['validation']['length_max']=11;
+$ddm4_elements['data']['kunde_id']['validation']['value_min']=1;
 $ddm4_elements['data']['kunde_id']['validation']['search_like']=false;
 
 /*
@@ -242,11 +243,13 @@ $ddm4_elements['data']['cron_artikel_1_id']['title']='Artikel';
 $ddm4_elements['data']['cron_artikel_1_id']['name']='cron_artikel_1_id';
 $ddm4_elements['data']['cron_artikel_1_id']['options']=[];
 $ddm4_elements['data']['cron_artikel_1_id']['options']['search']=true;
+$ddm4_elements['data']['cron_artikel_1_id']['options']['required']=true;
 $ddm4_elements['data']['cron_artikel_1_id']['options']['data']=$VIS2_WebERP_Verwaltung->getArtikel(false);
 $ddm4_elements['data']['cron_artikel_1_id']['validation']=[];
 $ddm4_elements['data']['cron_artikel_1_id']['validation']['module']='integer';
-$ddm4_elements['data']['cron_artikel_1_id']['validation']['length_min']=0;
+$ddm4_elements['data']['cron_artikel_1_id']['validation']['length_min']=1;
 $ddm4_elements['data']['cron_artikel_1_id']['validation']['length_max']=11;
+$ddm4_elements['data']['cron_artikel_1_id']['validation']['value_min']=1;
 $ddm4_elements['data']['cron_artikel_1_id']['_add']=[];
 $ddm4_elements['data']['cron_artikel_1_id']['_add']['options']=[];
 $ddm4_elements['data']['cron_artikel_1_id']['_add']['options']['data']=$VIS2_WebERP_Verwaltung->getArtikel();
@@ -260,6 +263,7 @@ $ddm4_elements['data']['cron_artikel_1_nr']['title']='cron_artikel_1_nr';
 $ddm4_elements['data']['cron_artikel_1_nr']['name']='cron_artikel_1_nr';
 $ddm4_elements['data']['cron_artikel_1_nr']['options']=[];
 $ddm4_elements['data']['cron_artikel_1_nr']['options']['search']=true;
+$ddm4_elements['data']['cron_artikel_1_nr']['options']['required']=true;
 $ddm4_elements['data']['cron_artikel_1_nr']['options']['default_value']=\osWFrame\Core\Settings::catchIntValue('cron_artikel_1_nr', 0, 'pg');
 $ddm4_elements['data']['cron_artikel_1_nr']['validation']=[];
 $ddm4_elements['data']['cron_artikel_1_nr']['validation']['module']='integer';
@@ -279,6 +283,7 @@ $ddm4_elements['data']['cron_artikel_1_kurz']['title']='cron_artikel_1_kurz';
 $ddm4_elements['data']['cron_artikel_1_kurz']['name']='cron_artikel_1_kurz';
 $ddm4_elements['data']['cron_artikel_1_kurz']['options']=[];
 $ddm4_elements['data']['cron_artikel_1_kurz']['options']['search']=true;
+$ddm4_elements['data']['cron_artikel_1_kurz']['options']['required']=true;
 $ddm4_elements['data']['cron_artikel_1_kurz']['options']['default_value']=\osWFrame\Core\Settings::catchStringValue('cron_artikel_1_kurz', '', 'pg');
 $ddm4_elements['data']['cron_artikel_1_kurz']['validation']=[];
 $ddm4_elements['data']['cron_artikel_1_kurz']['validation']['module']='string';
@@ -613,10 +618,6 @@ function ddm3_formular_'.$osW_DDM4->getName().'_artikel(position, load) {
 	}
 }';
 	$ajax[]=$_ajax;
-
-	foreach ($ajax_data['kunde_id'] as $element) {
-		$css[]='.ddm_element_'.$element.' {display:none;}';
-	}
 
 	$osW_DDM4->getTemplate()->addJSCodeHead(implode("\n", $ajax));
 	$osW_DDM4->getTemplate()->addCSSCodeHead(implode("\n", $css));
