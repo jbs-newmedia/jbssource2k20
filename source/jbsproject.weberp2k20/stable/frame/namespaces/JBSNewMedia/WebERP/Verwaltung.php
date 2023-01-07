@@ -47,67 +47,72 @@ class Verwaltung {
 	/**
 	 * @var array
 	 */
-	private array $config=[];
+	protected array $config=[];
 
 	/**
 	 * @var array
 	 */
-	private array $mitarbeiter=[];
+	protected array $mitarbeiter=[];
 
 	/**
 	 * @var array
 	 */
-	private array $kunden_anreden=[];
+	protected array $kunden_anreden=[];
 
 	/**
 	 * @var array
 	 */
-	private array $kunden_laender=[];
+	protected array $kunden_laender=[];
 
 	/**
 	 * @var array
 	 */
-	private array $kunden_konten=[];
+	protected array $kunden_konten=[];
 
 	/**
 	 * @var array
 	 */
-	private array $kunde_by_id=[];
+	protected array $kunde_by_id=[];
 
 	/**
 	 * @var array
 	 */
-	private array $artikel_by_id=[];
+	protected array $kunde_by_nr=[];
 
 	/**
 	 * @var array
 	 */
-	private array $years=[];
+	protected array $artikel_by_id=[];
 
 	/**
 	 * @var array
 	 */
-	private array $artikel_typen=[];
+	protected array $years=[];
 
 	/**
 	 * @var array
 	 */
-	private array $artikel_mwst=[];
+	protected array $artikel_typen=[];
 
 	/**
 	 * @var array
 	 */
-	private array $kunden=[];
+	protected array $artikel_mwst=[];
 
 	/**
 	 * @var array
 	 */
-	private array $artikel=[];
+	protected array $kunden=[];
 
 	/**
 	 * @var array
 	 */
-	private array $artikel_all=[];
+	protected array $artikel=[];
+
+	/**
+	 * @var array
+	 */
+	protected array $artikel_all=[];
 
 	/**
 	 * Verwaltung constructor.
@@ -684,6 +689,33 @@ class Verwaltung {
 		}
 
 		return $this->kunde_by_id[$kunde_id];
+	}
+
+	/**
+	 * @param int $kunde_id
+	 * @param int $mandant_id
+	 * @return array
+	 */
+	public function getKundeByNr(int $kunde_nr, int $mandant_id=0):array {
+		if ($mandant_id==0) {
+			$mandant_id=$this->getMandantId();
+		}
+		if (!isset($this->kunde_by_nr[$kunde_nr])) {
+			$this->kunde_by_id[$kunde_nr]=[];
+			$QselectData=self::getConnection();
+			$QselectData->prepare('SELECT * FROM :table_weberp_kunde: WHERE mandant_id=:mandant_id: AND kunde_nr=:kunde_nr:');
+			$QselectData->bindTable(':table_weberp_kunde:', 'weberp_kunde');
+			$QselectData->bindInt(':mandant_id:', $mandant_id);
+			$QselectData->bindInt(':kunde_nr:', $kunde_nr);
+			$QselectData->execute();
+			if ($QselectData->rowCount()==1) {
+				$result=$QselectData->fetch();
+				$this->kunde_by_nr[$kunde_nr]=$result;
+			}
+
+		}
+
+		return $this->kunde_by_nr[$kunde_nr];
 	}
 
 	/**

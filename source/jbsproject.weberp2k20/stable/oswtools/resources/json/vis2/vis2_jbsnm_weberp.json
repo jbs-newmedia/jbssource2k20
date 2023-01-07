@@ -317,6 +317,51 @@
       }
     },
     {
+      "navigation_parent_id": "weberp_konto",
+      "navigation_title": "Konto Kunde",
+      "navigation_sortorder": 20,
+      "navigation_ispublic": 1,
+      "page": {
+        "page_name": "WebERP Konto Kunde",
+        "page_name_intern": "weberp_konto_kunde",
+        "page_description": "WebERP Konto Kunde",
+        "page_ispublic": 1,
+        "permission": [
+          "link",
+          "view"
+        ]
+      },
+      "permission": {
+        "1": [
+          "link",
+          "view"
+        ]
+      }
+    },
+
+    {
+      "navigation_parent_id": "header_buchhaltung",
+      "navigation_title": "Zuordnen",
+      "navigation_sortorder": 10,
+      "navigation_ispublic": 1,
+      "page": {
+        "page_name": "WebERP Buchung Zuordnen",
+        "page_name_intern": "weberp_buchung_zuordnen",
+        "page_description": "WebERP Buchung Zuordnen",
+        "page_ispublic": 1,
+        "permission": [
+          "link",
+          "view"
+        ]
+      },
+      "permission": {
+        "1": [
+          "link",
+          "view"
+        ]
+      }
+    },
+    {
       "navigation_parent_id": "",
       "navigation_title": "Personal",
       "navigation_sortorder": 90,

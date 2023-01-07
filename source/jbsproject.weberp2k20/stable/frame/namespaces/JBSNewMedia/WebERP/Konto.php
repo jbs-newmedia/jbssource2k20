@@ -45,26 +45,39 @@ class Konto {
 	/**
 	 * @var array
 	 */
-	private array $buchungen=[];
+	protected array $buchungen=[];
 
 	/**
 	 * @var array
 	 */
-	private array $offene_posten=[];
+	protected array $posten=[];
 
 	/**
 	 * @var array
 	 */
-	private array $kunden_konten=[];
+	protected array $offene_posten=[];
 
 	/**
 	 * @var array
 	 */
-	private array $buchungs_ausgleich=[];
+	protected array $kunden_konten=[];
 
 	/**
-	 * Konto constructor.
-	 *
+	 * @var array
+	 */
+	protected array $kunden_konten_zuordnen=[];
+
+	/**
+	 * @var array
+	 */
+	protected array $kunden_konten_zuordnen_list=[];
+
+	/**
+	 * @var array
+	 */
+	protected array $konten_buchung_zuordnen=[];
+
+	/**
 	 * @param int $mandant_id
 	 */
 	public function __construct(int $mandant_id=0) {
@@ -176,7 +189,7 @@ class Konto {
 	public function loadBuchungen():bool {
 		$this->buchungen=[];
 		$QselectData=self::getConnection();
-		$QselectData->prepare('SELECT * FROM :table_weberp_buchung: WHERE mandant_id=:mandant_id: ORDER BY buchung_id DESC');
+		$QselectData->prepare('SELECT * FROM :table_weberp_buchung: WHERE mandant_id=:mandant_id: ORDER BY buchung_id ASC');
 		$QselectData->bindTable(':table_weberp_buchung:', 'weberp_buchung');
 		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
 		foreach ($QselectData->query() as $buchnung) {
@@ -188,10 +201,62 @@ class Konto {
 	}
 
 	/**
+	 * @param array|string $iban
+	 * @return bool
+	 */
+	public function loadBuchungenByIBAN(array|string $iban):bool {
+		if (!is_array($iban)) {
+			$iban=[$iban];
+		}
+		if ($iban==[]) {
+			return false;
+		}
+		$this->buchungen=[];
+		$QselectData=self::getConnection();
+		$QselectData->prepare('SELECT * FROM :table_weberp_buchung: WHERE mandant_id=:mandant_id: AND buchung_iban IN (:buchung_iban:) ORDER BY buchung_id ASC');
+		$QselectData->bindTable(':table_weberp_buchung:', 'weberp_buchung');
+		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
+		$QselectData->bindRaw(':buchung_iban:', '"'.implode('","', $iban).'"');
+		foreach ($QselectData->query() as $buchnung) {
+			$buchnung['buchung_betrag']=floatval($buchnung['buchung_betrag']);
+			$this->buchungen[$buchnung['buchung_id']]=$buchnung;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param array|string $iban
+	 * @return bool
+	 */
+	public function loadOffeneBuchungenByIBAN(array|string $iban, int $kunde_id):bool {
+		if (!is_array($iban)) {
+			$iban=[$iban];
+		}
+		if ($iban==[]) {
+			return false;
+		}
+		$this->buchungen=[];
+		$QselectData=self::getConnection();
+		$QselectData->prepare('SELECT b.* FROM :table_weberp_buchung: AS b LEFT JOIN :table_weberp_rechnung: AS r ON (r.kunde_id=:kunde_id: AND r.mandant_id=:mandant_id: AND (r.buchung_id_1=b.buchung_id OR r.buchung_id_2=b.buchung_id OR r.buchung_id_3=b.buchung_id)) WHERE b.mandant_id=:mandant_id: AND b.buchung_iban IN (:buchung_iban:) AND r.rechnung_id IS NULL ORDER BY b.buchung_id ASC');
+		$QselectData->bindTable(':table_weberp_buchung:', 'weberp_buchung');
+		$QselectData->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
+		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
+		$QselectData->bindInt(':kunde_id:', $kunde_id);
+		$QselectData->bindRaw(':buchung_iban:', '"'.implode('","', $iban).'"');
+		foreach ($QselectData->query() as $buchnung) {
+			$buchnung['buchung_betrag']=floatval($buchnung['buchung_betrag']);
+			$this->buchungen[$buchnung['buchung_id']]=$buchnung;
+		}
+
+		return true;
+	}
+
+	/**
 	 * @return array
 	 */
-	public function getBuchungen():array {
-		if ($this->buchungen==[]) {
+	public function getBuchungen($check_load=true):array {
+		if (($check_load===true)&&($this->buchungen==[])) {
 			$this->loadBuchungen();
 		}
 
@@ -201,10 +266,65 @@ class Konto {
 	/**
 	 * @return bool
 	 */
+	public function loadPosten():bool {
+		$this->posten=[];
+		$QselectData=self::getConnection();
+		$QselectData->prepare('SELECT * FROM :table_weberp_rechnung: WHERE mandant_id=:mandant_id: ORDER BY rechnung_id ASC');
+		$QselectData->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
+		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
+		foreach ($QselectData->query() as $rechnung) {
+			$rechnung['rechnung_gesamt_brutto']=floatval($rechnung['rechnung_gesamt_brutto']);
+			$rechnung['rechnung_gesamt_netto']=floatval($rechnung['rechnung_gesamt_netto']);
+			$rechnung['rechnung_gesamt_mwst']=floatval($rechnung['rechnung_gesamt_mwst']);
+			$this->posten[$rechnung['rechnung_id']]=$rechnung;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param array|int $kunde_id
+	 * @return bool
+	 */
+	public function loadPostenByKunde(array|int $kunde_id):bool {
+		if (!is_array($kunde_id)) {
+			$kunde_id=[$kunde_id];
+		}
+		$this->posten=[];
+		$QselectData=self::getConnection();
+		$QselectData->prepare('SELECT * FROM :table_weberp_rechnung: WHERE mandant_id=:mandant_id: AND kunde_id IN (:kunde_id:) ORDER BY rechnung_id ASC');
+		$QselectData->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
+		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
+		$QselectData->bindRaw(':kunde_id:', implode(',', $kunde_id));
+		foreach ($QselectData->query() as $rechnung) {
+			$rechnung['rechnung_gesamt_brutto']=floatval($rechnung['rechnung_gesamt_brutto']);
+			$rechnung['rechnung_gesamt_netto']=floatval($rechnung['rechnung_gesamt_netto']);
+			$rechnung['rechnung_gesamt_mwst']=floatval($rechnung['rechnung_gesamt_mwst']);
+			$this->posten[$rechnung['rechnung_id']]=$rechnung;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param $check_load
+	 * @return array
+	 */
+	public function getPosten($check_load=true):array {
+		if (($check_load===true)&&($this->posten==[])) {
+			$this->loadPosten();
+		}
+
+		return $this->posten;
+	}
+
+	/**
+	 * @return bool
+	 */
 	public function loadOffenePosten():bool {
 		$this->offene_posten=[];
 		$QselectData=self::getConnection();
-		$QselectData->prepare('SELECT * FROM :table_weberp_rechnung: WHERE mandant_id=:mandant_id: AND rechnung_bezahlt=:rechnung_bezahlt: AND rechnung_storniert=:rechnung_storniert: ORDER BY rechnung_id DESC');
+		$QselectData->prepare('SELECT * FROM :table_weberp_rechnung: WHERE mandant_id=:mandant_id: AND rechnung_bezahlt=:rechnung_bezahlt: AND rechnung_storniert=:rechnung_storniert: ORDER BY rechnung_id ASC');
 		$QselectData->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
 		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
 		$QselectData->bindInt(':rechnung_bezahlt:', 0);
@@ -220,10 +340,37 @@ class Konto {
 	}
 
 	/**
+	 * @param array|int $kunde_id
+	 * @return bool
+	 */
+	public function loadOffenePostenByKunde(array|int $kunde_id):bool {
+		if (!is_array($kunde_id)) {
+			$kunde_id=[$kunde_id];
+		}
+		$this->offene_posten=[];
+		$QselectData=self::getConnection();
+		$QselectData->prepare('SELECT * FROM :table_weberp_rechnung: WHERE mandant_id=:mandant_id: AND rechnung_bezahlt=:rechnung_bezahlt: AND rechnung_storniert=:rechnung_storniert: AND kunde_id IN (:kunde_id:) ORDER BY rechnung_id ASC');
+		$QselectData->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
+		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
+		$QselectData->bindInt(':rechnung_bezahlt:', 0);
+		$QselectData->bindInt(':rechnung_storniert:', 0);
+		$QselectData->bindRaw(':kunde_id:', implode(',', $kunde_id));
+		foreach ($QselectData->query() as $rechnung) {
+			$rechnung['rechnung_gesamt_brutto']=floatval($rechnung['rechnung_gesamt_brutto']);
+			$rechnung['rechnung_gesamt_netto']=floatval($rechnung['rechnung_gesamt_netto']);
+			$rechnung['rechnung_gesamt_mwst']=floatval($rechnung['rechnung_gesamt_mwst']);
+			$this->offene_posten[$rechnung['rechnung_id']]=$rechnung;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param $check_load
 	 * @return array
 	 */
-	public function getOffenePosten():array {
-		if ($this->offene_posten==[]) {
+	public function getOffenePosten($check_load=true):array {
+		if (($check_load===true)&&($this->offene_posten==[])) {
 			$this->loadOffenePosten();
 		}
 
@@ -247,10 +394,32 @@ class Konto {
 	}
 
 	/**
+	 * @param array|int $kunde_id
+	 * @return bool
+	 */
+	public function loadKundenKontenByKunde(array|int $kunde_id):bool {
+		if (!is_array($kunde_id)) {
+			$kunde_id=[$kunde_id];
+		}
+		$this->kunden_konten=[];
+		$QselectData=self::getConnection();
+		$QselectData->prepare('SELECT * FROM :table_weberp_kunde_konto: WHERE mandant_id=:mandant_id: AND kunde_id IN (:kunde_id:)');
+		$QselectData->bindTable(':table_weberp_kunde_konto:', 'weberp_kunde_konto');
+		$QselectData->bindInt(':mandant_id:', $this->getMandantId());
+		$QselectData->bindRaw(':kunde_id:', implode(',', $kunde_id));
+		foreach ($QselectData->query() as $kundenkonto) {
+			$this->kunden_konten[$kundenkonto['konto_id']]=$kundenkonto;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param $check_load
 	 * @return array
 	 */
-	public function getKundenKonten():array {
-		if ($this->kunden_konten==[]) {
+	public function getKundenKonten($check_load=true):array {
+		if (($check_load===true)&&($this->kunden_konten==[])) {
 			$this->loadKundenKonten();
 		}
 
@@ -260,19 +429,39 @@ class Konto {
 	/**
 	 * @return array
 	 */
-	public function loadBuchungsAusgleich():bool {
-		$this->buchungs_ausgleich=[];
-		$this->buchungs_ausgleich['ok']=[];
-		$this->buchungs_ausgleich['evtl']=[];
+	public function loadKundenKontenZuordnen():bool {
+		$this->kunden_konten_zuordnen=[];
+		$this->kunden_konten_zuordnen_list=[];
 		foreach ($this->getOffenePosten() as $offener_posten) {
 			foreach ($this->getBuchungen() as $buchung) {
-				if ((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_kunde_nr'])>0)&&(strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0)&&($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto'])) {
-					$this->buchungs_ausgleich['ok'][]=['offener_posten'=>$offener_posten, 'buchung_evtl'=>$buchung_evtl];
-				} elseif ((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0)&&($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto'])) {
-					$this->buchungs_ausgleich['ok'][]=['offener_posten'=>$offener_posten, 'buchung_evtl'=>$buchung_evtl];
-				} elseif (((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0))&&($buchung['buchung_betrag']>=$offener_posten['rechnung_gesamt_brutto'])) {
-					$this->buchungs_ausgleich['evtl'][]=['offener_posten'=>$offener_posten, 'buchung_evtl'=>$buchung_evtl];
+				if (((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_kunde_nr'])>0)&&(strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0)&&($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto']))||((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_nr'])>0)&&($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto']))||((strpos($buchung['buchung_verwendungszweck'], $offener_posten['rechnung_kunde_nr'])>0)&&($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto']))) {
+					$this->kunden_konten_zuordnen[$buchung['buchung_iban']]['konto']=$buchung;
+					$this->kunden_konten_zuordnen[$buchung['buchung_iban']]['kunde']=$offener_posten;
+					$this->kunden_konten_zuordnen[$buchung['buchung_iban']]['offener_posten'][]=$offener_posten;
+					if ($offener_posten['rechnung_kunde_firma']!='') {
+						$this->kunden_konten_zuordnen_list[$buchung['buchung_iban']]=$offener_posten['rechnung_kunde_nr'].' - '.$offener_posten['rechnung_kunde_firma'];
+					} else {
+						$this->kunden_konten_zuordnen_list[$buchung['buchung_iban']]=$offener_posten['rechnung_kunde_nr'].' - '.$offener_posten['rechnung_kunde_vorname'].' '.$offener_posten['rechnung_kunde_nachname'];
+					}
 				}
+			}
+		}
+
+		uasort($this->kunden_konten_zuordnen_list, function($a, $b) {
+			$aa=explode(' - ', $a);
+			$bb=explode(' - ', $b);
+
+			return $aa[0]<=>$bb[0];
+		});
+
+		/**
+		 * unset used ibans
+		 */
+		$Verwaltung=new Verwaltung($this->getMandantId());
+		foreach ($Verwaltung->getKundenKonten(false, 'konto_iban') as $iban=>$konto) {
+			if (isset($this->kunden_konten_zuordnen[$iban])) {
+				unset($this->kunden_konten_zuordnen[$iban]);
+				unset($this->kunden_konten_zuordnen_list[$iban]);
 			}
 		}
 
@@ -282,77 +471,177 @@ class Konto {
 	/**
 	 * @return array
 	 */
-	public function getBuchungsAusgleich():array {
-		if ($this->buchungs_ausgleich==[]) {
-			$this->loadBuchungsAusgleich();
+	public function getKundenKontenZuordnen():array {
+		if ($this->kunden_konten_zuordnen==[]) {
+			$this->loadKundenKontenZuordnen();
 		}
 
-		return $this->buchungs_ausgleich;
-	}
-
-	public function getBuchungsAusgleichAsList():array {
-		if ($this->buchungs_ausgleich==[]) {
-			$this->loadBuchungsAusgleich();
-		}
-
-		$ar_todo=[];
-		$ar_todo['ok']=[];
-		$ar_todo['evtl']=[];
-
-		foreach ($this->buchungs_ausgleich['ok'] as $buchungs_ausgleich) {
-			$ar_todo['ok'][$buchungs_ausgleich['offener_posten']['rechnung_nr']]='KdNr '.$buchungs_ausgleich['offener_posten']['rechnung_kunde_nr'].', ReNr '.$buchungs_ausgleich['offener_posten']['rechnung_nr'].', Betrag '.\osWFrame\Core\Math::formatNumber($buchungs_ausgleich['offener_posten']['rechnung_gesamt_brutto']).' Euro';
-		}
-
-		foreach ($this->buchungs_ausgleich['evtl'] as $buchungs_ausgleich) {
-			$ar_todo['evtl'][$buchungs_ausgleich['offener_posten']['rechnung_nr']]='KdNr '.$buchungs_ausgleich['offener_posten']['rechnung_kunde_nr'].', ReNr '.$buchungs_ausgleich['offener_posten']['rechnung_nr'].', Betrag '.\osWFrame\Core\Math::formatNumber($buchungs_ausgleich['offener_posten']['rechnung_gesamt_brutto']).' Euro';
-		}
-
-		return $ar_todo;
+		return $this->kunden_konten_zuordnen;
 	}
 
 	/**
-	 * @param array $set_data
-	 * @param int $vis_user_id
 	 * @return array
 	 */
-	public function setBuchungenAsPaid(array $set_data, int $vis_user_id):array {
-		if ($this->buchungs_ausgleich==[]) {
-			$this->loadBuchungsAusgleich();
+	public function getKundenKontenZuordnenAsList():array {
+		if ($this->kunden_konten_zuordnen==[]) {
+			$this->loadKundenKontenZuordnen();
 		}
 
-		$time=time();
-		$result=[];
-		$result['message']=0;
-		$result['type']='';
-		$result['ok']=0;
+		return $this->kunden_konten_zuordnen_list;
+	}
 
-		foreach ($set_data as $k=>$v) {
-			$renr=0;
-			if (strstr($k, 'buchung_passend_')) {
-				$renr=str_replace('buchung_passend_', '', $k);
-			}
-			if (strstr($k, 'buchung_ueberzahlt_')) {
-				$renr=str_replace('buchung_ueberzahlt_', '', $k);
-			}
-			$renr=intval($renr);
-			if ($renr>0) {
-				$result['ok']++;
-				$Qset=self::getConnection();
-				$Qset->prepare('UPDATE :table_weberp_rechnung: SET rechnung_bezahlt=:rechnung_bezahlt:, rechnung_update_time=:rechnung_update_time:, rechnung_update_user_id=:rechnung_update_user_id: WHERE mandant_id=:mandant_id: AND rechnung_nr=:rechnung_nr:');
-				$Qset->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
-				$Qset->bindInt(':rechnung_bezahlt:', 1);
-				$Qset->bindInt(':rechnung_update_time:', $time);
-				$Qset->bindInt(':rechnung_update_user_id:', $vis_user_id);
-				$Qset->bindInt(':mandant_id:', $this->getMandantId());
-				$Qset->bindInt(':rechnung_nr:', $renr);
-				$Qset->execute();
+	/**
+	 * @param int $kunde_id
+	 * @param string $iban
+	 * @param int $user_id
+	 * @return bool
+	 */
+	public function createKundenKonto(int $kunde_id, string $iban, int $user_id=0):bool {
+		$Qset=self::getConnection();
+		$Qset->prepare('INSERT INTO :table_weberp_kunde_konto: (kunde_id, mandant_id, konto_iban, konto_ispublic, konto_create_time, konto_create_user_id, konto_update_time, konto_update_user_id) VALUES (:kunde_id:, :mandant_id:, :konto_iban:, :konto_ispublic:, :konto_create_time:, :konto_create_user_id:, :konto_update_time:, :konto_update_user_id:)');
+		$Qset->bindTable(':table_weberp_kunde_konto:', 'weberp_kunde_konto');
+		$Qset->bindInt(':kunde_id:', $kunde_id);
+		$Qset->bindInt(':mandant_id:', $this->getMandantId());
+		$Qset->bindString(':konto_iban:', $iban);
+		$Qset->bindInt(':konto_ispublic:', 1);
+		$Qset->bindRaw(':konto_create_time:', time());
+		$Qset->bindInt(':konto_create_user_id:', $user_id);
+		$Qset->bindRaw(':konto_update_time:', time());
+		$Qset->bindInt(':konto_update_user_id:', $user_id);
+		$Qset->execute();
+
+		return true;
+	}
+
+	/**
+	 * @param string $modus
+	 * @return bool
+	 */
+	public function loadKontenBuchungZuordnen(string $modus=''):bool {
+		$this->konten_buchung_zuordnen=[];
+		$kunde_ibans=[];
+		$konten=[];
+		foreach ($this->getKundenKonten() as $konto) {
+			$konten[$konto['konto_iban']]=$konto;
+			$kunde_ibans[$konto['kunde_id']][]=$konto['konto_iban'];
+		}
+
+		foreach ($kunde_ibans as $kunde_id=>$ibans) {
+			$this->loadOffenePostenByKunde($kunde_id);
+			if ($modus=='konto') {
+				$this->loadBuchungenByIBAN($ibans, $kunde_id);
+				$this->checkPostenBuchungKontoKunde($kunde_id, $this->getOffenePosten(false), $this->getBuchungen(false));
+			} else {
+				$this->loadOffeneBuchungenByIBAN($ibans, $kunde_id);
+				$this->checkPostenBuchungKunde($kunde_id, $this->getOffenePosten(false), $this->getBuchungen(false ));
 			}
 		}
 
-		$result['message']='Zuweisung der Buchungen erfolgreich (Alle: '.$result['ok'].').';
-		$result['type']='success';
+		return true;
+	}
 
-		return $result;
+	/**
+	 * @param array $offene_posten
+	 * @param array $buchungen
+	 * @return bool
+	 */
+	protected function checkPostenBuchungKunde(int $kunde_id, array $offene_posten, array $buchungen):bool {
+		if ($offene_posten==[]) {
+			return false;
+		}
+
+		krsort($offene_posten);
+
+		$Verwaltung = new Verwaltung($this->getMandantId());
+		$this->konten_buchung_zuordnen[$kunde_id]=[];
+		$this->konten_buchung_zuordnen[$kunde_id]['details']=$Verwaltung->getKundeById($kunde_id);
+		$buchungen_list=[];
+		$buchungen_list[]='Bitte wählen';
+		$buchungen_list[-1]='Ohne Buchung ausgleichen';
+		foreach ($buchungen as $pos) {
+			if ($pos['buchung_valutadatum']>date('Ymd', (time()-(60*60*24*365)))) {
+				$buchungen_list[$pos['buchung_id']]=$Verwaltung->formatNumber($pos['buchung_betrag']).' Euro - '.$pos['buchung_verwendungszweck'];
+			}
+		}
+		$this->konten_buchung_zuordnen[$kunde_id]['offene_posten']=$offene_posten;
+		$this->konten_buchung_zuordnen[$kunde_id]['buchungen']=$buchungen_list;
+
+		return true;
+	}
+
+	/**
+	 * @param array $offene_posten
+	 * @param array $buchungen
+	 * @return bool
+	 */
+	protected function checkPostenBuchungKontoKunde(int $kunde_id, array $offene_posten, array $buchungen):bool {
+		if ($offene_posten!=[]) {
+			foreach ($offene_posten as $offener_posten) {
+				foreach ($buchungen as $buchung) {
+					if ($buchung['buchung_betrag']==$offener_posten['rechnung_gesamt_brutto']) {
+						$this->konten_buchung_zuordnen[$kunde_id][md5(serialize($offener_posten).serialize($buchung))]=['offener_posten'=>$offener_posten, 'buchung'=>$buchung];
+						$this->konten_buchung_zuordnen_list[$kunde_id][md5(serialize($offener_posten).serialize($buchung))]=$offener_posten['rechnung_kunde_nr'].' - '.$offener_posten['rechnung_nr'].' - '.$offener_posten['rechnung_gesamt_brutto'].' - '.$buchung['buchung_betrag'];
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param string $modus
+	 * @return array
+	 */
+	public function getKontenBuchungZuordnen(string $modus=''):array {
+		if ($this->konten_buchung_zuordnen==[]) {
+			$this->loadKontenBuchungZuordnen($modus);
+		}
+
+		return $this->konten_buchung_zuordnen;
+	}
+
+	/**
+	 * @param int $rechnung_nr
+	 * @param int $buchung_id
+	 * @param int $pos
+	 * @param int $user_id
+	 * @return bool
+	 */
+	public function setBuchung2Rechnung(int $rechnung_nr, int $buchung_id, int $pos=0, int $user_id=0):bool {
+		$Qset=self::getConnection();
+		$Qset->prepare('UPDATE :table_weberp_rechnung: SET rechnung_bezahlt=:rechnung_bezahlt:, :buchung:=:buchung_id:, rechnung_update_time=:rechnung_update_time:, rechnung_update_user_id=:rechnung_update_user_id: WHERE mandant_id=:mandant_id: AND rechnung_nr=:rechnung_nr:');
+		$Qset->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
+		$Qset->bindInt(':rechnung_bezahlt:', 1);
+		$Qset->bindRaw(':buchung:', 'buchung_id_'.$pos);
+		$Qset->bindInt(':buchung_id:', $buchung_id);
+		$Qset->bindInt(':rechnung_update_time:', time());
+		$Qset->bindInt(':rechnung_update_user_id:', $user_id);
+		$Qset->bindInt(':mandant_id:', $this->getMandantId());
+		$Qset->bindInt(':rechnung_nr:', $rechnung_nr);
+		$Qset->execute();
+
+		return true;
+	}
+
+	/**
+	 * @param int $rechnung_nr
+	 * @param int $user_id
+	 * @return bool
+	 */
+	public function setBuchungAsUnPaid(int $rechnung_nr, int $user_id=0):bool {
+		$Qset=self::getConnection();
+		$Qset->prepare('UPDATE :table_weberp_rechnung: SET rechnung_bezahlt=:rechnung_bezahlt:, buchung_id_1=:buchung_id:, buchung_id_2=:buchung_id:, buchung_id_3=:buchung_id:, rechnung_update_time=:rechnung_update_time:, rechnung_update_user_id=:rechnung_update_user_id: WHERE mandant_id=:mandant_id: AND rechnung_nr=:rechnung_nr:');
+		$Qset->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
+		$Qset->bindInt(':rechnuJSmeister2k@ng_bezahlt:', 0);
+		$Qset->bindInt(':buchung_id:', 0);
+		$Qset->bindInt(':rechnung_update_time:', time());
+		$Qset->bindInt(':rechnung_update_user_id:', $user_id);
+		$Qset->bindInt(':mandant_id:', $this->getMandantId());
+		$Qset->bindInt(':rechnung_nr:', $rechnung_nr);
+		$Qset->execute();
+
+		return true;
 	}
 
 }

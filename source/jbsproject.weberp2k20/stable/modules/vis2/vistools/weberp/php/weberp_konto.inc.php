@@ -75,7 +75,7 @@ $ddm4_elements=$osW_DDM4->getElementsArrayInit();
 $navigation_links=[];
 $navigation_links[1]=['navigation_id'=>1, 'module'=>$osW_DDM4->getDirectModule(), 'parameter'=>'vistool='.$VIS2_Main->getTool().'&vispage='.$VIS2_Navigation->getPage(), 'text'=>'Buchungen'];
 $navigation_links[2]=['navigation_id'=>2, 'module'=>$osW_DDM4->getDirectModule(), 'parameter'=>'vistool='.$VIS2_Main->getTool().'&vispage='.$VIS2_Navigation->getPage(), 'text'=>'Kontodaten importieren'];
-$navigation_links[3]=['navigation_id'=>3, 'module'=>$osW_DDM4->getDirectModule(), 'parameter'=>'vistool='.$VIS2_Main->getTool().'&vispage='.$VIS2_Navigation->getPage(), 'text'=>'Zuordnen'];
+$navigation_links[3]=['navigation_id'=>3, 'module'=>$osW_DDM4->getDirectModule(), 'parameter'=>'vistool='.$VIS2_Main->getTool().'&vispage='.$VIS2_Navigation->getPage(), 'text'=>'Zuordnen (KundenKonten)'];
 
 $osW_DDM4->readParameters();
 
@@ -367,48 +367,24 @@ if (in_array($ddm_navigation_id, [3])) {
 	$ddm4_elements['send']['vis2_navigation']['options']['data']=$navigation_links;
 
 	$Konto=new \JBSNewMedia\WebERP\Konto($VIS2_Mandant->getId());
-	$ar_todo=$Konto->getBuchungsAusgleichAsList();
 
-	if ($ar_todo['ok']!==[]) {
-		/*
-		 * Send: Passend
-		 */
-		$ddm4_elements['send']['buchung_passend']=[];
-		$ddm4_elements['send']['buchung_passend']['module']='bitmask';
-		$ddm4_elements['send']['buchung_passend']['title']='Passend';
-		$ddm4_elements['send']['buchung_passend']['options']=[];
-		$ddm4_elements['send']['buchung_passend']['options']['data']=$ar_todo['ok'];
+	if ($Konto->getKundenKontenZuordnenAsList()!=[]) {
+		foreach ($Konto->getKundenKontenZuordnenAsList() as $iban=>$title) {
+			/*
+			 * Send: IBAN
+			 */
+			$ddm4_elements['send']['iban_'.$iban]=[];
+			$ddm4_elements['send']['iban_'.$iban]['module']='yesno';
+			$ddm4_elements['send']['iban_'.$iban]['title']=$title.' ('.$iban.')';
+			$ddm4_elements['send']['iban_'.$iban]['options']=[];
+			$ddm4_elements['send']['iban_'.$iban]['options']['default_value']=1;
+		}
 	} else {
-		/*
-		 * Send: Passend
-		 */
-		$ddm4_elements['send']['buchung_passend']=[];
-		$ddm4_elements['send']['buchung_passend']['module']='text';
-		$ddm4_elements['send']['buchung_passend']['title']='Passend';
-		$ddm4_elements['send']['buchung_passend']['options']=[];
-		$ddm4_elements['send']['buchung_passend']['options']['read_only']=true;
-		$ddm4_elements['send']['buchung_passend']['options']['default_value']='---';
-	}
-
-	if ($ar_todo['evtl']!==[]) {
-		/*
-		 * Send: Überzahlt
-		 */
-		$ddm4_elements['send']['buchung_ueberzahlt']=[];
-		$ddm4_elements['send']['buchung_ueberzahlt']['module']='bitmask';
-		$ddm4_elements['send']['buchung_ueberzahlt']['title']='Überzahlt';
-		$ddm4_elements['send']['buchung_ueberzahlt']['options']=[];
-		$ddm4_elements['send']['buchung_ueberzahlt']['options']['data']=$ar_todo['evtl'];
-	} else {
-		/*
-		 * Send: Passend
-		 */
-		$ddm4_elements['send']['buchung_ueberzahlt']=[];
-		$ddm4_elements['send']['buchung_ueberzahlt']['module']='text';
-		$ddm4_elements['send']['buchung_ueberzahlt']['title']='Überzahlt';
-		$ddm4_elements['send']['buchung_ueberzahlt']['options']=[];
-		$ddm4_elements['send']['buchung_ueberzahlt']['options']['read_only']=true;
-		$ddm4_elements['send']['buchung_ueberzahlt']['options']['default_value']='---';
+		$ddm4_elements['send']['notice']=[];
+		$ddm4_elements['send']['notice']['module']='label';
+		$ddm4_elements['send']['notice']['title']='Information';
+		$ddm4_elements['send']['notice']['options']=[];
+		$ddm4_elements['send']['notice']['options']['label']='Keine Konten zum Zuordnen vorhanden';
 	}
 
 	/*
@@ -418,12 +394,13 @@ if (in_array($ddm_navigation_id, [3])) {
 	$ddm4_elements['send']['submit']['module']='submit';
 
 	/*
-	 * Finish: VIS2_WebERP_KontoImport
+	 * Finish: VIS2_WebERP_KontoBuchung
 	 */
 	$ddm4_elements['finish']['vis2_weberp_kontobuchung']=[];
 	$ddm4_elements['finish']['vis2_weberp_kontobuchung']['module']='vis2_weberp_kontobuchung';
 	$ddm4_elements['finish']['vis2_weberp_kontobuchung']['options']=[];
 	$ddm4_elements['finish']['vis2_weberp_kontobuchung']['options']['konto']=$Konto;
+	$ddm4_elements['finish']['vis2_weberp_kontobuchung']['options']['modus']='kontozuordnen';
 
 	/*
 	 * AfterFinish: VIS2_Direct

@@ -457,6 +457,14 @@ $ddm4_elements['data']['vis2_createupdatestatus']['_list']['options']['display_c
 $ddm4_elements['data']['options']=[];
 $ddm4_elements['data']['options']['module']='options';
 $ddm4_elements['data']['options']['title']='Optionen';
+$ddm4_elements['data']['options']['options']=[];
+$ddm4_elements['data']['options']['options']['links']=[];
+$ddm4_elements['data']['options']['options']['links']['0']=[];
+$ddm4_elements['data']['options']['options']['links']['0']['target']='_blank';
+$ddm4_elements['data']['options']['options']['links']['0']['module']=$osW_DDM4->getDirectModule();
+$ddm4_elements['data']['options']['options']['links']['0']['parameter']='vistool='.$VIS2_Main->getTool().'&vispage=weberp_konto_kunde';
+$ddm4_elements['data']['options']['options']['links']['0']['text']='Konto';
+$ddm4_elements['data']['options']['options']['links']['0']['content']='<i class="fas fa-euro-sign fa-fw"></i>';
 
 /*
 * Finish: VIS2_Store_Form_Data

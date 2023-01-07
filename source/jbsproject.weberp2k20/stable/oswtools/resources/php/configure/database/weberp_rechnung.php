@@ -118,22 +118,38 @@ CREATE TABLE :table: (
 }
 
 /*
- * update table
+ * update table DBV-1.1
  */
-/*
-if (($av_tbl<=1)&&($ab_tbl<1)) {
+if (($av_tbl==1)&&($ab_tbl==0)) {
+	$__datatable_do=true;
 	$av_tbl=1;
 	$ab_tbl=1;
-	$__datatable_do=true;
 
-	... code ...
+	$QupdateData=new \osWFrame\Core\Database();
+	$QupdateData->prepare('
+ALTER TABLE :table:
+	ADD buchung_id_1 int(11) NOT NULL AFTER kunde_id,
+    ADD buchung_id_2 int(11) NOT NULL AFTER buchung_id_1,
+    ADD buchung_id_3 int(11) NOT NULL AFTER buchung_id_2,
+	CHANGE rechnung_kunde_nr rechnung_kunde_nr int(11) unsigned NOT NULL DEFAULT \'0\',
+	ADD INDEX buchung_id_1 (buchung_id_1),
+	ADD INDEX buchung_id_2 (buchung_id_2),
+    ADD INDEX buchung_id_3 (buchung_id_3);
+');
+	$QupdateData->bindRaw(':table:', $this->getJSONStringValue('database_prefix').$__datatable_table);
+	$QupdateData->execute();
+	if ($QupdateData->hasError()===true) {
+		$tables_error[]='table:'.$__datatable_table.', patch:'.$av_tbl.'.'.$ab_tbl;
+		$db_error[]=$QupdateData->getErrorMessage();
+		$av_tbl=1;
+		$ab_tbl=0;
+	}
 }
-*/
 
 if ($__datatable_do===true) {
 	$QwriteData=new \osWFrame\Core\Database();
 	$QwriteData->prepare('ALTER TABLE :table: COMMENT=:version:;');
-	$QwriteData->bindString(':table:', $this->getJSONStringValue('database_prefix').$__datatable_table);
+	$QwriteData->bindRaw(':table:', $this->getJSONStringValue('database_prefix').$__datatable_table);
 	$QwriteData->bindString(':version:', $av_tbl.'.'.$ab_tbl);
 	$QwriteData->execute();
 	if ($QwriteData->hasError()===true) {

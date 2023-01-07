@@ -8,13 +8,36 @@
  * @package VIS2:WebERP
  * @link https://jbs-newmedia.com
  * @license MIT License
+ *
+ * @var \JBSNewMedia\WebERP\Konto $Konto
  */
 
 $Konto=$this->getFinishElementOption($element, 'konto');
-$result=$Konto->setBuchungenAsPaid($_POST, $this->getGroupOption('user_id', 'data'));
+$modus=$this->getFinishElementOption($element, 'modus');
 
-if (in_array($result['type'], ['success', 'danger'])) {
-	osWFrame\Core\SessionMessageStack::addMessage('session', $result['type'], ['msg'=>$result['message']]);
+$Daten=$Konto->getKundenKontenZuordnen();
+if ($modus=='kontozuordnen') {
+	foreach ($Konto->getKundenKontenZuordnenAsList() as $iban=>$title) {
+		$iban_check=\osWFrame\Core\Settings::catchIntPostValue('iban_'.$iban);
+		if ($iban_check==1) {
+			$Konto->createKundenKonto($Daten[$iban]['kunde']['kunde_id'], $iban, $this->getGroupOption('user_id', 'data'));
+		}
+	}
+	osWFrame\Core\SessionMessageStack::addMessage('session', 'success', ['msg'=>'Alle Konten wurden erfolgreich zugeordnet.']);
+}
+
+if ($modus=='buchungzuordnen') {
+	if ($Konto->getKontenBuchungZuordnenAsList()!=[]) {
+		foreach ($Konto->getKontenBuchungZuordnen() as $kunde_id=>$list) {
+			foreach ($list as $buchung) {
+				$buchung_check=\osWFrame\Core\Settings::catchIntPostValue('buchung_'.md5(serialize($buchung['offener_posten']).serialize($buchung['buchung'])));
+				if ($buchung_check==1) {
+					$Konto->setBuchungAsPaid($buchung, $this->getGroupOption('user_id', 'data'));
+				}
+			}
+		}
+	}
+	osWFrame\Core\SessionMessageStack::addMessage('session', 'success', ['msg'=>'Alle Buchungen wurden erfolgreich zugeordnet.']);
 }
 
 ?>
