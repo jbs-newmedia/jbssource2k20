@@ -965,11 +965,11 @@ class Verwaltung {
 			$QselectKunde->bindInt(':kunde_id:', $kunde_id);
 			$QselectKunde->execute();
 			if ($QselectKunde->rowCount()==1) {
-				$result=$QselectKunde->fetch();
+				$result_kunde=$QselectKunde->fetch();
 				foreach ($rechnung_data_year as $year=>$rechnung_data_month) {
 					$rechnung=[];
 					$rechnung['kunde_id']=$kunde_id;
-					$rechnung['kunde_data']=$result;
+					$rechnung['kunde_data']=$result_kunde;
 					$rechnung['rechnung_nr']='';
 					$rechnung['leistung_von']=99999999;
 					$rechnung['leistung_bis']=0;
@@ -993,8 +993,8 @@ class Verwaltung {
 					$QselectRechnung->bindInt(':rechnung_nr:', date('y').'000');
 					$QselectRechnung->execute();
 					if ($QselectRechnung->rowCount()==1) {
-						$result=$QselectRechnung->fetch();
-						$rechnung['rechnung_nr']=$result['rechnung_nr'];
+						$result_rechnung=$QselectRechnung->fetch();
+						$rechnung['rechnung_nr']=$result_rechnung['rechnung_nr'];
 						$rechnung['rechnung_nr']=$rechnung['rechnung_nr']+1;
 					} else {
 						$rechnung['rechnung_nr']=date('y').'001';

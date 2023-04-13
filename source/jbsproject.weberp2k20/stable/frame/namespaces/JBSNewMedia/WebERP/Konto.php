@@ -560,7 +560,7 @@ class Konto {
 		$buchungen_list[-1]='Ohne Buchung ausgleichen';
 		foreach ($buchungen as $pos) {
 			if ($pos['buchung_valutadatum']>date('Ymd', (time()-(60*60*24*365)))) {
-				$buchungen_list[$pos['buchung_id']]=$Verwaltung->formatNumber($pos['buchung_betrag']).' Euro - '.$pos['buchung_verwendungszweck'];
+				$buchungen_list[$pos['buchung_id']]=$Verwaltung->formatNumber($pos['buchung_betrag']).' Euro - '.$pos['buchung_verwendungszweck'].' - '.substr($pos['buchung_valutadatum'], 6, 2).'.'.substr($pos['buchung_valutadatum'], 4, 2).'.'.substr($pos['buchung_valutadatum'], 0, 4);
 			}
 		}
 		$this->konten_buchung_zuordnen[$kunde_id]['offene_posten']=$offene_posten;
@@ -633,7 +633,7 @@ class Konto {
 		$Qset=self::getConnection();
 		$Qset->prepare('UPDATE :table_weberp_rechnung: SET rechnung_bezahlt=:rechnung_bezahlt:, buchung_id_1=:buchung_id:, buchung_id_2=:buchung_id:, buchung_id_3=:buchung_id:, rechnung_update_time=:rechnung_update_time:, rechnung_update_user_id=:rechnung_update_user_id: WHERE mandant_id=:mandant_id: AND rechnung_nr=:rechnung_nr:');
 		$Qset->bindTable(':table_weberp_rechnung:', 'weberp_rechnung');
-		$Qset->bindInt(':rechnuJSmeister2k@ng_bezahlt:', 0);
+		$Qset->bindInt(':rechnung_bezahlt:', 0);
 		$Qset->bindInt(':buchung_id:', 0);
 		$Qset->bindInt(':rechnung_update_time:', time());
 		$Qset->bindInt(':rechnung_update_user_id:', $user_id);
